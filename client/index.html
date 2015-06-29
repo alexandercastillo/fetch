@@ -1,0 +1,55 @@
+<!doctype html>
+<html ng-app="fetch">
+  <head>
+    <title>Fetch</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="node_modules/angular-material/angular-material.css">
+    <link rel="stylesheet" type="text/css" href="css/app.css">
+  </head>
+  <body ng-cloak>
+
+    <section>
+
+      <md-toolbar class="md-warn">
+        <div class="md-toolbar-tools">
+          <h2 class="md-flex">Fch!</h2>
+        </div>
+      </md-toolbar>
+
+      <md-content ng-controller="AuthCtrl" layout="row" layout-padding>
+        <md-button class="md-primary" ng-click="login()">Start!</md-button>
+      </md-content>
+
+      <md-content ng-controller="PhotosCtrl as ctrl" layout-padding>
+
+        <h2 ng-if="photos.length">Tagged Photos ({{ photos.length }})</h2>
+
+        <md-progress-circular md-mode="indeterminate" ng-if="isStep('fetching') || isStep('downloading')"></md-progress-circular>
+
+        <md-checkbox ng-model="selectAll" ng-init="selectAll=true" ng-if="photos.length" aria-label="Select All" ng-change="selectPhotos(photos, selectAll)"> Select All</md-checkbox>
+
+        <md-button class="md-primary" ng-click="download()" ng-if="isStep('fetched')">Download!</md-button>
+
+        <md-content layout-padding>
+
+          <md-grid-list class="photos-grid" md-cols-sm="1" md-cols-md="2" md-cols-gt-md="6"
+                       md-row-height="4:3" md-gutter="8px" md-gutter-gt-sm="4px" >
+            <md-grid-tile ng-repeat="photo in photos">
+              <img ng-src="{{ photo.source }}" />
+              <md-grid-tile-footer>
+                <md-checkbox ng-change="checkSelection(photo.selected)" ng-model="photo.selected" aria-label="Select photo by {{ photo.from.name }}">
+                <h3>By {{ photo.from.name }}</h3>
+              </md-grid-tile-footer>
+            </md-grid-tile>
+          </md-grid-list>
+
+        </md-content>
+
+      </md-content>
+
+    </section>
+
+    <script src="js/bundle.js"></script>
+
+  </body>
+</html>
