@@ -37,7 +37,7 @@ app.controller('AuthCtrl', ($scope, $rootScope, $firebaseAuth, Facebook) => {
 
 });
 
-app.controller('PhotosCtrl', ($scope, $rootScope, $firebaseAuth, $http, $q, Facebook) => {
+app.controller('PhotosCtrl', ($scope, $rootScope, $firebaseAuth, $q, Facebook) => {
 
   $scope.photos = [];
 
@@ -49,33 +49,16 @@ app.controller('PhotosCtrl', ($scope, $rootScope, $firebaseAuth, $http, $q, Face
     return $scope.step === step;
   };
 
-  var getPhotos = (user, next) => {
-    if (next) {
-      $http.get(next).then(function(data) {
-        console.log('$http', data.data);
-        var photos = $scope.selectPhotos(data.data.data, true);
-        photos.forEach(function (photo) {
-          $scope.photos.push(photo);
-        })
-        if (data.data.paging.next) {
-          getPhotos(user, data.data.paging.next);
-        } else {
-          $rootScope.$broadcast('$fetch');
-        }
-      });
-    } else {
-      Facebook.api(`${user.facebook.id}/photos`, function (photos) {
-        $scope.photos = $scope.selectPhotos(photos.data, true);
-        console.log('Facebook', photos);
-        if (photos.paging) {
-          getPhotos(user, photos.paging.next); 
-        } else {
-          $rootScope.$broadcast('$fetch');
-        }
-      }, { 
-        access_token: user.facebook.accessToken 
-      });
-    }
+  var getPhotos = (user, ) => {
+
+    Facebook.api('me/photos/tagged?fields=source,picture,from,name&limit=100000', function (photos) {
+      console.log('Facebook', photos);
+      $scope.photos = $scope.selectPhotos(photos.data, true);
+      $rootScope.$broadcast('$fetch');
+    }, { 
+      access_token: user.facebook.accessToken 
+    });
+
   };
   
   $scope.selectPhotos = (photos, selection) => {
